@@ -118,13 +118,10 @@
   input.invalid, select.invalid { border-color: var(--err); box-shadow: 0 0 0 3px rgba(162,59,46,.1); }
   textarea { resize: vertical; min-height: 80px; }
 
-  .radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
-  .radio-pill {
-    flex: 1; min-width: 130px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--line);
-    border-radius: 10px; padding: 12px 14px; cursor: pointer; font-size: 14px; font-weight: 500;
-  }
-  .radio-pill input { width: auto; accent-color: var(--teal); }
-  .radio-pill:has(input:checked) { border-color: var(--teal); background: rgba(23,107,117,.06); }
+  .checkbox-row { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+  .checkbox-row input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--teal); flex: none; }
+  .checkbox-row span { font-size: 14px; font-weight: 500; }
+  .comm-note { font-size: 13px; color: var(--gray); background: #fffdf9; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin: 0 0 20px; line-height: 1.5; }
 
   /* guests */
   .guest-card { position: relative; border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 14px; background: #fffdf9; }
@@ -132,7 +129,7 @@
   .guest-card__title { font-size: 13px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: .06em; }
   .rm-guest { background: none; border: 0; color: var(--err); font-size: 13px; font-weight: 600; cursor: pointer; padding: 4px; }
   .guest-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-  @media (min-width: 620px) { .guest-grid { grid-template-columns: 2fr 1fr 1fr; } }
+  @media (min-width: 620px) { .guest-grid { grid-template-columns: 2fr 1fr; } }
   .occupancy-bar { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 18px; font-size: 13px; color: var(--gray); }
   .occupancy-bar strong { color: var(--navy); }
   .add-guest { width: 100%; border: 1.5px dashed var(--gold); background: transparent; color: var(--navy); font-weight: 600; padding: 13px; border-radius: 10px; cursor: pointer; }
@@ -301,15 +298,9 @@
               <p class="hint">Include your country code.</p>
             </div>
           </div>
-          <div class="row2">
-            <div class="field">
-              <label for="resp_birth">Date of birth <span style="font-weight:400;color:var(--gray)">(optional)</span></label>
-              <input id="resp_birth" type="date">
-            </div>
-            <div class="field">
-              <label for="resp_address">Home address <span style="font-weight:400;color:var(--gray)">(optional)</span></label>
-              <input id="resp_address" autocomplete="street-address" placeholder="City, state, country">
-            </div>
+          <div class="field">
+            <label for="resp_address">Home address <span style="font-weight:400;color:var(--gray)">(optional)</span></label>
+            <input id="resp_address" autocomplete="street-address" placeholder="City, state, country">
           </div>
           <div class="field">
             <label for="vehicles">Vehicles &amp; license plates <span style="font-weight:400;color:var(--gray)">(if driving)</span></label>
@@ -348,11 +339,10 @@
             <textarea id="notes" rows="3" placeholder="Anything that would help us prepare for your stay"></textarea>
           </div>
           <div class="field">
-            <label>Preferred contact method</label>
-            <div class="radio-group">
-              <label class="radio-pill"><input type="radio" name="contact_pref" value="email" checked> Email</label>
-              <label class="radio-pill"><input type="radio" name="contact_pref" value="whatsapp"> WhatsApp</label>
-            </div>
+            <label class="checkbox-row" for="contact_whatsapp">
+              <input type="checkbox" id="contact_whatsapp">
+              <span>We can reach you on WhatsApp if needed.</span>
+            </label>
           </div>
         </div>
         <div class="nav-row"><button type="button" class="btn btn-ghost" data-back>Back</button><button type="button" class="btn btn-primary" data-next>Continue</button></div>
@@ -377,6 +367,8 @@
             <div class="rule-card"><div class="rule-icon"><svg><use href="#i-camera"/></svg></div><div><h4>No commercial filming</h4><p>Commercial photography or filming is not permitted on the property.</p></div></div>
             <div class="rule-card"><div class="rule-icon"><svg><use href="#i-stairs"/></svg></div><div><h4>Accessibility</h4><p>This is a second-floor duplex reached by stairs, with an additional staircase to the bedrooms. It is not wheelchair accessible.</p></div></div>
           </div>
+
+          <p class="comm-note">We'll primarily communicate through the booking platform you used to reserve your stay. If something needs to move quickly, we may also reach out by SMS or WhatsApp.</p>
 
           <div class="accept-row">
             <input type="checkbox" id="accepted_rules">
@@ -500,7 +492,6 @@ function addGuest() {
     </div>
     <div class="guest-grid">
       <div class="field" style="margin:0"><label>Full name</label><input class="g-name"></div>
-      <div class="field" style="margin:0"><label>Date of birth</label><input class="g-birth" type="date"></div>
       <div class="field" style="margin:0"><label>Relation</label><input class="g-rel" placeholder="e.g. spouse, child"></div>
     </div>`;
   el.querySelector('.rm-guest').addEventListener('click', () => { el.remove(); updateOccupancy(); });
@@ -520,7 +511,6 @@ $('#form').addEventListener('submit', async (e) => {
   const v = (id) => $('#' + id).value.trim();
   const guests = $$('.guest-card', guestList).map((g) => ({
     name: g.querySelector('.g-name').value.trim(),
-    birth: g.querySelector('.g-birth').value,
     relation: g.querySelector('.g-rel').value.trim(),
   }));
 
@@ -537,9 +527,9 @@ $('#form').addEventListener('submit', async (e) => {
       body: JSON.stringify({
         check_in: v('check_in'), check_out: v('check_out'), platform: v('platform'), arrival_time: v('arrival_time'),
         resp_name: v('resp_name'), resp_email: v('resp_email'), resp_phone: v('resp_phone'),
-        resp_birth: v('resp_birth'), resp_address: v('resp_address'), vehicles: v('vehicles'),
+        resp_address: v('resp_address'), vehicles: v('vehicles'),
         pets: v('pets'), notes: v('notes'), guests, language: 'en',
-        contact_pref: document.querySelector('input[name=contact_pref]:checked').value,
+        contact_pref: $('#contact_whatsapp').checked ? 'whatsapp' : 'email',
         accepted_rules: $('#accepted_rules').checked, website: v('website'),
       }),
     });

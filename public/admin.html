@@ -163,7 +163,7 @@ function status(r) {
 
 function row(r) {
   const [cls, label] = status(r);
-  const guests = (r.guests || []).map((g) => `<li>${esc(g.name)}${g.birth ? ' (' + esc(g.birth) + ')' : ''}${g.relation ? ', ' + esc(g.relation) : ''}</li>`).join('');
+  const guests = (r.guests || []).map((g) => `<li>${esc(g.name)}${g.relation ? ', ' + esc(g.relation) : ''}</li>`).join('');
   const phone = String(r.resp_phone).replace(/[^\d+]/g, '');
   return `<div class="card">
     <div class="head">
@@ -176,7 +176,6 @@ function row(r) {
       <dl>
         <dt>Email</dt><dd>${esc(r.resp_email)}</dd>
         <dt>Phone</dt><dd>${esc(r.resp_phone)}</dd>
-        <dt>Birth</dt><dd>${esc(r.resp_birth ? day(r.resp_birth) : '—')}</dd>
         <dt>Address</dt><dd>${esc(r.resp_address || '—')}</dd>
         <dt>Vehicles</dt><dd>${esc(r.vehicles || '—')}</dd>
         <dt>Pets</dt><dd>${esc(r.pets || '—')}</dd>
