@@ -37,7 +37,7 @@
   .container { max-width: 760px; margin: 0 auto; padding: 0 20px; }
 
   /* ---------- Hero ---------- */
-  .hero { position: relative; min-height: 86vh; display: flex; align-items: flex-end; overflow: hidden; color: var(--white); }
+  .hero { position: relative; min-height: min(72vh, 620px); display: flex; align-items: flex-end; overflow: hidden; color: var(--white); }
   .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
   .hero::after {
     content: ''; position: absolute; inset: 0;
@@ -50,8 +50,7 @@
   }
   .hero__content h1 { font-size: 34px; line-height: 1.15; color: var(--white); margin-bottom: 10px; }
   .hero__tagline { font-family: var(--serif); font-style: italic; font-size: 19px; color: var(--sand); margin: 0 0 14px; }
-  .hero__sub { max-width: 480px; margin: 0 auto 26px; color: rgba(250,248,244,.88); font-size: 15px; }
-  .hero__rating { font-size: 13px; color: var(--sand); margin-bottom: 22px; letter-spacing: .02em; }
+  .hero__sub { max-width: 480px; margin: 0 auto 28px; color: rgba(250,248,244,.88); font-size: 15px; }
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     font: 600 15px/1 var(--sans); letter-spacing: .01em; border-radius: 10px; padding: 15px 30px;
@@ -67,12 +66,28 @@
   /* ---------- Gallery strip ---------- */
   .gallery { padding: 34px 0 6px; }
   .gallery__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .gallery__item { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 4/3; background: var(--sand); }
-  .gallery__item img { width: 100%; height: 100%; object-fit: cover; }
+  .gallery__item { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 4/3; background: var(--sand); cursor: pointer; border: 0; padding: 0; display: block; }
+  .gallery__item img { width: 100%; height: 100%; object-fit: cover; transition: transform .25s ease; }
+  .gallery__item:hover img { transform: scale(1.05); }
   .gallery__cap {
     position: absolute; left: 10px; bottom: 8px; color: var(--white); font-size: 12px; font-weight: 500;
     text-shadow: 0 1px 4px rgba(0,0,0,.5);
   }
+
+  /* ---------- Lightbox ---------- */
+  .lightbox {
+    display: none; position: fixed; inset: 0; z-index: 50; background: rgba(20,43,59,.94);
+    align-items: center; justify-content: center; padding: 40px 20px;
+  }
+  .lightbox.show { display: flex; }
+  .lightbox img { max-width: 100%; max-height: 86vh; border-radius: 10px; width: auto; }
+  .lightbox__close {
+    position: absolute; top: 18px; right: 20px; width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(250,248,244,.12); border: 1px solid rgba(250,248,244,.4); color: var(--white);
+    font-size: 20px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .lightbox__close:hover { background: rgba(250,248,244,.22); }
+  .lightbox__cap { position: absolute; bottom: 24px; left: 0; right: 0; text-align: center; color: var(--sand); font-size: 13px; }
 
   /* ---------- Wizard shell ---------- */
   .wizard { padding: 30px 0 70px; }
@@ -155,7 +170,13 @@
   .summary-card dt { font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--gold); font-weight: 700; margin-top: 12px; }
   .summary-card dt:first-child { margin-top: 0; }
   .summary-card dd { margin: 2px 0 0; font-size: 15px; font-weight: 500; }
-  .received-note { font-size: 13px; color: var(--teal); font-weight: 600; }
+  .received-note { font-size: 13px; color: var(--teal); font-weight: 600; margin-bottom: 26px; }
+  .social-link {
+    display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 999px;
+    padding: 10px 20px; font-size: 13.5px; font-weight: 600; color: var(--navy); text-decoration: none; background: var(--white);
+  }
+  .social-link:hover { border-color: var(--gold); color: var(--gold); }
+  .social-link svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.7; }
 
   footer.site { text-align: center; padding: 26px 20px 40px; color: var(--gray); font-size: 12.5px; }
 
@@ -184,6 +205,7 @@
   <symbol id="i-beach" viewBox="0 0 24 24"><path d="M12 3v6M3 21c3-6 15-6 18 0M12 9c5 1.5 8 6 8 10.5H4C4 15 7 10.5 12 9Z"/></symbol>
   <symbol id="i-stairs" viewBox="0 0 24 24"><path d="M4 20h4v-4h4v-4h4V8h4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></symbol>
+  <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></symbol>
 </svg>
 
 <header class="hero">
@@ -193,7 +215,6 @@
     <h1>Welcome to Coronado Del Mar</h1>
     <p class="hero__tagline">Your coastal getaway begins here.</p>
     <p class="hero__sub">Complete your pre-check-in before arrival and enjoy a smooth, effortless start to your stay.</p>
-    <p class="hero__rating">★ 4.98 rating · Airbnb Superhost</p>
     <a href="#wizard" class="btn btn-primary">Start Pre-Check-In</a>
   </div>
 </header>
@@ -201,13 +222,19 @@
 <section class="gallery">
   <div class="container">
     <div class="gallery__grid">
-      <div class="gallery__item"><img src="/images/balcony-view.webp" alt="Private balcony with ocean views" loading="lazy"><span class="gallery__cap">Oceanview balcony</span></div>
-      <div class="gallery__item"><img src="/images/living.webp" alt="Living and dining area" loading="lazy"><span class="gallery__cap">Living &amp; dining</span></div>
-      <div class="gallery__item"><img src="/images/bedroom.webp" alt="Primary bedroom" loading="lazy"><span class="gallery__cap">Primary bedroom</span></div>
-      <div class="gallery__item"><img src="/images/pool-beach.webp" alt="Community pool and beach access" loading="lazy"><span class="gallery__cap">Pool &amp; beach access</span></div>
+      <button type="button" class="gallery__item" data-full="/images/balcony-view.webp" data-cap="Oceanview balcony"><img src="/images/balcony-view.webp" alt="Private balcony with ocean views" loading="lazy"><span class="gallery__cap">Oceanview balcony</span></button>
+      <button type="button" class="gallery__item" data-full="/images/living.webp" data-cap="Living &amp; dining"><img src="/images/living.webp" alt="Living and dining area" loading="lazy"><span class="gallery__cap">Living &amp; dining</span></button>
+      <button type="button" class="gallery__item" data-full="/images/bedroom.webp" data-cap="Primary bedroom"><img src="/images/bedroom.webp" alt="Primary bedroom" loading="lazy"><span class="gallery__cap">Primary bedroom</span></button>
+      <button type="button" class="gallery__item" data-full="/images/pool-beach.webp" data-cap="Pool &amp; beach access"><img src="/images/pool-beach.webp" alt="Community pool and beach access" loading="lazy"><span class="gallery__cap">Pool &amp; beach access</span></button>
     </div>
   </div>
 </section>
+
+<div class="lightbox" id="lightbox">
+  <button type="button" class="lightbox__close" id="lightboxClose" aria-label="Close">&times;</button>
+  <img id="lightboxImg" src="" alt="">
+  <p class="lightbox__cap" id="lightboxCap"></p>
+</div>
 
 <main class="wizard" id="wizard">
   <div class="container">
@@ -376,6 +403,10 @@
         <dt>Primary guest</dt><dd id="sumName">—</dd>
       </dl>
       <p class="received-note">Your information has been received successfully.</p>
+      <a class="social-link" href="https://www.instagram.com/beachfrontheavennsb" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24"><use href="#i-instagram"/></svg>
+        Follow us on Instagram
+      </a>
     </div>
 
   </div>
@@ -430,6 +461,24 @@ $$('[data-next]').forEach((b) => b.addEventListener('click', () => {
   if (validateStep(current)) showStep(current + 1);
 }));
 $$('[data-back]').forEach((b) => b.addEventListener('click', () => { clearError(); showStep(current - 1); }));
+
+/* ---------- Lightbox ---------- */
+const lightbox = $('#lightbox');
+const lightboxImg = $('#lightboxImg');
+const lightboxCap = $('#lightboxCap');
+
+function openLightbox(btn) {
+  lightboxImg.src = btn.dataset.full;
+  lightboxImg.alt = btn.querySelector('img').alt;
+  lightboxCap.textContent = btn.dataset.cap || '';
+  lightbox.classList.add('show');
+}
+function closeLightbox() { lightbox.classList.remove('show'); lightboxImg.src = ''; }
+
+$$('.gallery__item').forEach((btn) => btn.addEventListener('click', () => openLightbox(btn)));
+$('#lightboxClose').addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lightbox.classList.contains('show')) closeLightbox(); });
 
 /* ---------- Guests ---------- */
 const guestList = $('#guestList');
