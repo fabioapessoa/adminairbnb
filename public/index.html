@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#142B3B">
+<meta name="robots" content="noindex">
+<title>Pre-Check-In | Coronado Del Mar, Unit 15</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #142B3B;
+    --teal: #176B75;
+    --ivory: #FAF8F4;
+    --sand: #E9DFD0;
+    --gold: #B69A72;
+    --gray: #707A80;
+    --white: #FFFFFF;
+    --line: #E6DECB;
+    --err: #A23B2E;
+    --ok: #1F6F5C;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(20,43,59,.05), 0 6px 20px rgba(20,43,59,.06);
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'Inter', -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--ivory); color: var(--navy);
+    font: 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; margin: 0; color: var(--navy); }
+  img { max-width: 100%; display: block; }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; min-height: 86vh; display: flex; align-items: flex-end; overflow: hidden; color: var(--white); }
+  .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
+  .hero::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(20,43,59,.25) 0%, rgba(20,43,59,.35) 45%, rgba(20,43,59,.88) 100%);
+  }
+  .hero__content { position: relative; z-index: 1; width: 100%; padding: 48px 20px 44px; text-align: center; }
+  .hero__badge {
+    display: inline-block; font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    border: 1px solid rgba(250,248,244,.55); border-radius: 999px; padding: 6px 16px; margin-bottom: 22px; color: var(--sand);
+  }
+  .hero__content h1 { font-size: 34px; line-height: 1.15; color: var(--white); margin-bottom: 10px; }
+  .hero__tagline { font-family: var(--serif); font-style: italic; font-size: 19px; color: var(--sand); margin: 0 0 14px; }
+  .hero__sub { max-width: 480px; margin: 0 auto 26px; color: rgba(250,248,244,.88); font-size: 15px; }
+  .hero__rating { font-size: 13px; color: var(--sand); margin-bottom: 22px; letter-spacing: .02em; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font: 600 15px/1 var(--sans); letter-spacing: .01em; border-radius: 10px; padding: 15px 30px;
+    border: 1px solid transparent; cursor: pointer; text-decoration: none; transition: background .15s, color .15s, border-color .15s;
+  }
+  .btn-primary { background: var(--gold); color: var(--navy); }
+  .btn-primary:hover { background: #a68a63; }
+  .btn-primary:disabled { opacity: .55; cursor: wait; }
+  .btn-ghost { background: transparent; border-color: var(--line); color: var(--navy); }
+  .btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+  .btn-block { width: 100%; }
+
+  /* ---------- Gallery strip ---------- */
+  .gallery { padding: 34px 0 6px; }
+  .gallery__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .gallery__item { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 4/3; background: var(--sand); }
+  .gallery__item img { width: 100%; height: 100%; object-fit: cover; }
+  .gallery__cap {
+    position: absolute; left: 10px; bottom: 8px; color: var(--white); font-size: 12px; font-weight: 500;
+    text-shadow: 0 1px 4px rgba(0,0,0,.5);
+  }
+
+  /* ---------- Wizard shell ---------- */
+  .wizard { padding: 30px 0 70px; }
+  .progress-track { height: 4px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 18px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--gold)); transition: width .3s ease; width: 20%; }
+  .step-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; }
+  .step-eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  .step-count { font-size: 12px; color: var(--gray); }
+  .step-title { font-size: 25px; margin: 6px 0 6px; }
+  .step-sub { color: var(--gray); font-size: 14.5px; margin: 0 0 24px; }
+
+  .panel { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; }
+  .step { display: none; }
+  .step.active { display: block; animation: fade .25s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: translateY(0);} }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 13.5px; font-weight: 600; margin-bottom: 6px; color: var(--navy); }
+  .field .hint { font-size: 12.5px; color: var(--gray); margin-top: 5px; }
+  .row2 { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  @media (min-width: 560px) { .row2 { grid-template-columns: 1fr 1fr; } }
+
+  input, select, textarea {
+    width: 100%; font: inherit; padding: 13px 14px; border: 1px solid var(--line); border-radius: 10px;
+    background: var(--white); color: var(--navy);
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(23,107,117,.12); }
+  input.invalid, select.invalid { border-color: var(--err); box-shadow: 0 0 0 3px rgba(162,59,46,.1); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  .radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
+  .radio-pill {
+    flex: 1; min-width: 130px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--line);
+    border-radius: 10px; padding: 12px 14px; cursor: pointer; font-size: 14px; font-weight: 500;
+  }
+  .radio-pill input { width: auto; accent-color: var(--teal); }
+  .radio-pill:has(input:checked) { border-color: var(--teal); background: rgba(23,107,117,.06); }
+
+  /* guests */
+  .guest-card { position: relative; border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 14px; background: #fffdf9; }
+  .guest-card__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .guest-card__title { font-size: 13px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: .06em; }
+  .rm-guest { background: none; border: 0; color: var(--err); font-size: 13px; font-weight: 600; cursor: pointer; padding: 4px; }
+  .guest-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 620px) { .guest-grid { grid-template-columns: 2fr 1fr 1fr; } }
+  .occupancy-bar { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 18px; font-size: 13px; color: var(--gray); }
+  .occupancy-bar strong { color: var(--navy); }
+  .add-guest { width: 100%; border: 1.5px dashed var(--gold); background: transparent; color: var(--navy); font-weight: 600; padding: 13px; border-radius: 10px; cursor: pointer; }
+  .add-guest:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* rules */
+  .rules-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
+  @media (min-width: 620px) { .rules-grid { grid-template-columns: 1fr 1fr; } }
+  .rule-card { display: flex; gap: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: #fffdf9; }
+  .rule-icon { flex: none; width: 34px; height: 34px; border-radius: 9px; background: var(--navy); color: var(--sand); display: flex; align-items: center; justify-content: center; }
+  .rule-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .rule-card h4 { font-size: 14px; margin: 2px 0 4px; font-weight: 700; }
+  .rule-card p { font-size: 13px; color: var(--gray); margin: 0; line-height: 1.5; }
+  .accept-row { display: flex; gap: 12px; align-items: flex-start; border-top: 1px solid var(--line); padding-top: 18px; }
+  .accept-row input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--teal); flex: none; }
+  .accept-row label { font-size: 14px; font-weight: 500; }
+
+  .nav-row { display: flex; gap: 12px; margin-top: 24px; }
+  .nav-row .btn { flex: 1; }
+  .nav-row.single .btn { flex: none; width: 100%; }
+
+  .msg-banner { padding: 12px 14px; border-radius: 10px; font-size: 13.5px; margin-bottom: 16px; display: none; background: #FBEDEA; color: var(--err); border: 1px solid #f0d5cf; }
+  .msg-banner.show { display: block; }
+  .privacy-note { text-align: center; color: var(--gray); font-size: 12.5px; margin-top: 16px; }
+
+  .hp { position: absolute; left: -9999px; height: 0; overflow: hidden; }
+
+  /* confirmation */
+  .confirmation { display: none; text-align: center; padding: 10px 4px 60px; }
+  .confirmation.show { display: block; }
+  .confirmation__icon { width: 56px; height: 56px; border-radius: 50%; background: var(--teal); color: var(--white); display: flex; align-items: center; justify-content: center; margin: 4px auto 18px; }
+  .confirmation h2 { font-size: 27px; margin-bottom: 8px; }
+  .confirmation > p { color: var(--gray); max-width: 420px; margin: 0 auto 24px; }
+  .summary-card { text-align: left; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 22px; max-width: 420px; margin: 0 auto 18px; }
+  .summary-card dt { font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--gold); font-weight: 700; margin-top: 12px; }
+  .summary-card dt:first-child { margin-top: 0; }
+  .summary-card dd { margin: 2px 0 0; font-size: 15px; font-weight: 500; }
+  .received-note { font-size: 13px; color: var(--teal); font-weight: 600; }
+
+  footer.site { text-align: center; padding: 26px 20px 40px; color: var(--gray); font-size: 12.5px; }
+
+  @media (min-width: 760px) {
+    .hero__content h1 { font-size: 46px; }
+    .hero__tagline { font-size: 22px; }
+    .hero__sub { font-size: 16px; max-width: 540px; }
+    .gallery__grid { grid-template-columns: repeat(4, 1fr); }
+    .panel { padding: 34px 40px; }
+    .step-title { font-size: 29px; }
+  }
+</style>
+</head>
+<body>
+
+<svg class="hp" aria-hidden="true">
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.2c2.4.5 4.5 2.6 4.5 5.8"/></symbol>
+  <symbol id="i-smoke" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5 5l14 14"/></symbol>
+  <symbol id="i-paw" viewBox="0 0 24 24"><ellipse cx="12" cy="16" rx="5" ry="4"/><circle cx="6" cy="9" r="1.6"/><circle cx="10" cy="6.5" r="1.6"/><circle cx="14" cy="6.5" r="1.6"/><circle cx="18" cy="9" r="1.6"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19 14.5A8 8 0 1 1 9.5 5a6.3 6.3 0 1 0 9.5 9.5Z"/></symbol>
+  <symbol id="i-party" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 16l8-8M5 5l14 14"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><rect x="5" y="9" width="10" height="7" rx="1.5"/><path d="M20 4L4 20"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M4 16V12l2-5h12l2 5v4"/><path d="M4 16h16"/><circle cx="7.5" cy="16.5" r="1.6"/><circle cx="16.5" cy="16.5" r="1.6"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="12" r="4"/><path d="M12 12h9M17 12v4M20 12v3"/></symbol>
+  <symbol id="i-beach" viewBox="0 0 24 24"><path d="M12 3v6M3 21c3-6 15-6 18 0M12 9c5 1.5 8 6 8 10.5H4C4 15 7 10.5 12 9Z"/></symbol>
+  <symbol id="i-stairs" viewBox="0 0 24 24"><path d="M4 20h4v-4h4v-4h4V8h4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></symbol>
+</svg>
+
+<header class="hero">
+  <img src="/images/hero.webp" alt="Sunset ocean view from Coronado Del Mar, with palm trees and the community pool below" loading="eager" fetchpriority="high">
+  <div class="hero__content">
+    <span class="hero__badge">Unit 15 · New Smyrna Beach, Florida</span>
+    <h1>Welcome to Coronado Del Mar</h1>
+    <p class="hero__tagline">Your coastal getaway begins here.</p>
+    <p class="hero__sub">Complete your pre-check-in before arrival and enjoy a smooth, effortless start to your stay.</p>
+    <p class="hero__rating">★ 4.98 rating · Airbnb Superhost</p>
+    <a href="#wizard" class="btn btn-primary">Start Pre-Check-In</a>
+  </div>
+</header>
+
+<section class="gallery">
+  <div class="container">
+    <div class="gallery__grid">
+      <div class="gallery__item"><img src="/images/balcony-view.webp" alt="Private balcony with ocean views" loading="lazy"><span class="gallery__cap">Oceanview balcony</span></div>
+      <div class="gallery__item"><img src="/images/living.webp" alt="Living and dining area" loading="lazy"><span class="gallery__cap">Living &amp; dining</span></div>
+      <div class="gallery__item"><img src="/images/bedroom.webp" alt="Primary bedroom" loading="lazy"><span class="gallery__cap">Primary bedroom</span></div>
+      <div class="gallery__item"><img src="/images/pool-beach.webp" alt="Community pool and beach access" loading="lazy"><span class="gallery__cap">Pool &amp; beach access</span></div>
+    </div>
+  </div>
+</section>
+
+<main class="wizard" id="wizard">
+  <div class="container">
+
+    <form id="form" novalidate>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+      <div class="msg-banner" id="err" role="alert"></div>
+
+      <!-- STEP 1 -->
+      <section class="step active" data-step="1">
+        <div class="step-meta"><span class="step-eyebrow">Your Reservation</span><span class="step-count">Step 1 of 5</span></div>
+        <h2 class="step-title">Let's Confirm Your Stay</h2>
+        <p class="step-sub">A few details to help us prepare for your arrival.</p>
+        <div class="panel">
+          <div class="row2">
+            <div class="field">
+              <label for="check_in">Check-in date</label>
+              <input type="date" id="check_in" required>
+            </div>
+            <div class="field">
+              <label for="check_out">Check-out date</label>
+              <input type="date" id="check_out" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="platform">Where did you book?</label>
+            <select id="platform">
+              <option value="">Select one</option>
+              <option>Airbnb</option>
+              <option>Booking.com</option>
+              <option>VRBO</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="arrival_time">Estimated arrival time <span style="font-weight:400;color:var(--gray)">(optional)</span></label>
+            <input id="arrival_time" type="text" placeholder="e.g. 5:00 PM">
+            <p class="hint">Check-in is after 4:00 PM. Self check-in with a smart lock — no need to meet anyone.</p>
+          </div>
+        </div>
+        <div class="nav-row single"><button type="button" class="btn btn-primary" data-next>Continue</button></div>
+      </section>
+
+      <!-- STEP 2 -->
+      <section class="step" data-step="2">
+        <div class="step-meta"><span class="step-eyebrow">Primary Guest</span><span class="step-count">Step 2 of 5</span></div>
+        <h2 class="step-title">Tell Us About Yourself</h2>
+        <p class="step-sub">Please provide the information of the person who made the reservation.</p>
+        <div class="panel">
+          <div class="field">
+            <label for="resp_name">Full name</label>
+            <input id="resp_name" autocomplete="name" required>
+            <p class="hint">Please use the same name as on the booking.</p>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label for="resp_email">Email address</label>
+              <input id="resp_email" type="email" inputmode="email" autocomplete="email" required>
+            </div>
+            <div class="field">
+              <label for="resp_phone">Phone number</label>
+              <input id="resp_phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+1 555 123 4567" required>
+              <p class="hint">Include your country code.</p>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label for="resp_birth">Date of birth <span style="font-weight:400;color:var(--gray)">(optional)</span></label>
+              <input id="resp_birth" type="date">
+            </div>
+            <div class="field">
+              <label for="resp_address">Home address <span style="font-weight:400;color:var(--gray)">(optional)</span></label>
+              <input id="resp_address" autocomplete="street-address" placeholder="City, state, country">
+            </div>
+          </div>
+          <div class="field">
+            <label for="vehicles">Vehicles &amp; license plates <span style="font-weight:400;color:var(--gray)">(if driving)</span></label>
+            <input id="vehicles" placeholder="e.g. 1 car, plate ABC1234">
+          </div>
+        </div>
+        <div class="nav-row"><button type="button" class="btn btn-ghost" data-back>Back</button><button type="button" class="btn btn-primary" data-next>Continue</button></div>
+      </section>
+
+      <!-- STEP 3 -->
+      <section class="step" data-step="3">
+        <div class="step-meta"><span class="step-eyebrow">Additional Guests</span><span class="step-count">Step 3 of 5</span></div>
+        <h2 class="step-title">Who's Joining You?</h2>
+        <p class="step-sub">Please register everyone staying at the property, including children.</p>
+        <div class="panel">
+          <div class="occupancy-bar"><span>Total guests, including you</span><strong id="occupancyLabel">1 of 8</strong></div>
+          <div id="guestList"></div>
+          <button type="button" class="add-guest" id="addGuest">+ Add Guest</button>
+        </div>
+        <div class="nav-row"><button type="button" class="btn btn-ghost" data-back>Back</button><button type="button" class="btn btn-primary" data-next>Continue</button></div>
+      </section>
+
+      <!-- STEP 4 -->
+      <section class="step" data-step="4">
+        <div class="step-meta"><span class="step-eyebrow">Additional Details</span><span class="step-count">Step 4 of 5</span></div>
+        <h2 class="step-title">Anything Else We Should Know?</h2>
+        <p class="step-sub">Help us make your arrival as comfortable as possible.</p>
+        <div class="panel">
+          <div class="field">
+            <label for="pets">Pets <span style="font-weight:400;color:var(--gray)">(type and size, if any)</span></label>
+            <input id="pets" placeholder="e.g. 1 dog, 25 lbs">
+            <p class="hint">Pets are welcome, one per stay, subject to the property's pet policy.</p>
+          </div>
+          <div class="field">
+            <label for="notes">Special requests <span style="font-weight:400;color:var(--gray)">(optional)</span></label>
+            <textarea id="notes" rows="3" placeholder="Anything that would help us prepare for your stay"></textarea>
+          </div>
+          <div class="field">
+            <label>Preferred contact method</label>
+            <div class="radio-group">
+              <label class="radio-pill"><input type="radio" name="contact_pref" value="email" checked> Email</label>
+              <label class="radio-pill"><input type="radio" name="contact_pref" value="whatsapp"> WhatsApp</label>
+            </div>
+          </div>
+        </div>
+        <div class="nav-row"><button type="button" class="btn btn-ghost" data-back>Back</button><button type="button" class="btn btn-primary" data-next>Continue</button></div>
+      </section>
+
+      <!-- STEP 5 -->
+      <section class="step" data-step="5">
+        <div class="step-meta"><span class="step-eyebrow">House Rules</span><span class="step-count">Step 5 of 5</span></div>
+        <h2 class="step-title">A Few Things to Know Before Your Stay</h2>
+        <p class="step-sub">Please review our property guidelines to help ensure a comfortable experience for everyone.</p>
+        <div class="panel">
+          <div class="rules-grid">
+            <div class="rule-card"><div class="rule-icon"><svg><use href="#i-clock"/></svg></div><div><h4>Check-in &amp; check-out</h4><p>Check-in is after 4:00 PM and check-out is before 10:00 AM, with self check-in through a smart lock.</p></div></div>
+            <div class="rule-card"><div class="rule-icon"><svg><use href="#i-users"/></svg></div><div><h4>Occupancy</h4><p>Up to 8 overnight guests, including children. Only registered guests may stay or use shared amenities.</p></div></div>
+            <div class="rule-card"><div class="rule-icon"><svg><use href="#i-smoke"/></svg></div><div><h4>No smoking</h4><p>Smoking and vaping are not permitted indoors. A $1,250 fee applies for ozone air treatment if this occurs.</p></div></div>
+            <div class="rule-card"><div class="rule-icon"><svg><use href="#i-paw"/></svg></div><div><h4>Pets</h4><p>Well-behaved pets are welcome, one per stay. Please keep pets off the furniture and clean up after them.</p></div></div>
+            <div class="rule-card"><div class="rule-icon"><svg><use href="#i-moon"/></svg></div><div><h4>Quiet hours</h4><p>9:00 PM to 9:00 AM. This is a peaceful, year-round residential community — thank you for keeping noise low.</p></div></div>
+            <div class="rule-card"><div class="rule-icon"><svg><use href="#i-party"/></svg></div><div><h4>No parties or events</h4><p>Gatherings beyond the registered guests on the booking are not permitted.</p></div></div>
+            <div class="rule-card"><div class="rule-icon"><svg><use href="#i-car"/></svg></div><div><h4>Parking</h4><p>One assigned spot is included. A second vehicle must be confirmed with us in advance and isn't guaranteed. No golf carts or trailers.</p></div></div>
+            <div class="rule-card"><div class="rule-icon"><svg><use href="#i-key"/></svg></div><div><h4>Pool access</h4><p>A pool access key is provided for your stay. A $100 fee applies if it's lost or not returned.</p></div></div>
+            <div class="rule-card"><div class="rule-icon"><svg><use href="#i-beach"/></svg></div><div><h4>Beach gear</h4><p>Chairs, an umbrella and a cooler are provided — please rinse and return them to their storage spot after use.</p></div></div>
+            <div class="rule-card"><div class="rule-icon"><svg><use href="#i-camera"/></svg></div><div><h4>No commercial filming</h4><p>Commercial photography or filming is not permitted on the property.</p></div></div>
+            <div class="rule-card"><div class="rule-icon"><svg><use href="#i-stairs"/></svg></div><div><h4>Accessibility</h4><p>This is a second-floor duplex reached by stairs, with an additional staircase to the bedrooms. It is not wheelchair accessible.</p></div></div>
+          </div>
+
+          <div class="accept-row">
+            <input type="checkbox" id="accepted_rules">
+            <label for="accepted_rules">I have read and agree to the house rules.</label>
+          </div>
+        </div>
+        <div class="hp"><label>Website<input id="website" tabindex="-1" autocomplete="off"></label></div>
+        <div class="nav-row">
+          <button type="button" class="btn btn-ghost" data-back>Back</button>
+          <button class="btn btn-primary" id="submit" type="submit">Complete Pre-Check-In</button>
+        </div>
+        <p class="privacy-note">Your information is used only to prepare for your stay and to meet the condominium's security requirements.</p>
+      </section>
+    </form>
+
+    <div class="confirmation" id="confirmation">
+      <div class="confirmation__icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg></div>
+      <h2>You're All Set!</h2>
+      <p>Thank you for completing your pre-check-in. We look forward to welcoming you to Coronado Del Mar.</p>
+      <dl class="summary-card">
+        <dt>Property</dt><dd>Coronado Del Mar, Unit 15 — New Smyrna Beach, FL</dd>
+        <dt>Check-in</dt><dd id="sumCheckIn">—</dd>
+        <dt>Check-out</dt><dd id="sumCheckOut">—</dd>
+        <dt>Primary guest</dt><dd id="sumName">—</dd>
+      </dl>
+      <p class="received-note">Your information has been received successfully.</p>
+    </div>
+
+  </div>
+</main>
+
+<footer class="site">Coronado Del Mar · Unit 15 · New Smyrna Beach, Florida</footer>
+
+<script>
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+const MAX_GUESTS = 8;
+const steps = $$('.step');
+let current = 1;
+let submitting = false;
+
+function updateProgress() {
+  $('#progressFill').style.width = (current / steps.length * 100) + '%';
+}
+
+function showStep(n) {
+  steps.forEach((s) => s.classList.toggle('active', Number(s.dataset.step) === n));
+  current = n;
+  updateProgress();
+  $('#wizard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function mark(el, bad) { el.classList.toggle('invalid', bad); return bad; }
+function showError(text) { const b = $('#err'); b.textContent = text; b.classList.add('show'); }
+function clearError() { $('#err').classList.remove('show'); }
+
+function validateStep(n) {
+  clearError();
+  let bad = false;
+  if (n === 1) {
+    const ci = $('#check_in').value, co = $('#check_out').value;
+    bad = mark($('#check_in'), !ci) || bad;
+    bad = mark($('#check_out'), !co) || bad;
+    if (!bad && co <= ci) { mark($('#check_out'), true); bad = true; showError('Check-out must be after check-in.'); }
+    else if (bad) showError('Please fill in your check-in and check-out dates.');
+  } else if (n === 2) {
+    bad = mark($('#resp_name'), !$('#resp_name').value.trim()) || bad;
+    bad = mark($('#resp_email'), !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('#resp_email').value.trim())) || bad;
+    bad = mark($('#resp_phone'), $('#resp_phone').value.replace(/\D/g, '').length < 7) || bad;
+    if (bad) showError('Please fill in your name, a valid email and a valid phone number.');
+  } else if (n === 5) {
+    if (!$('#accepted_rules').checked) { bad = true; showError('Please confirm you have read and agree to the house rules.'); }
+  }
+  return !bad;
+}
+
+$$('[data-next]').forEach((b) => b.addEventListener('click', () => {
+  if (validateStep(current)) showStep(current + 1);
+}));
+$$('[data-back]').forEach((b) => b.addEventListener('click', () => { clearError(); showStep(current - 1); }));
+
+/* ---------- Guests ---------- */
+const guestList = $('#guestList');
+
+function updateOccupancy() {
+  const total = $$('.guest-card', guestList).length + 1;
+  $('#occupancyLabel').textContent = `${total} of ${MAX_GUESTS}`;
+  $('#addGuest').disabled = total >= MAX_GUESTS;
+}
+
+function addGuest() {
+  if ($$('.guest-card', guestList).length + 1 >= MAX_GUESTS) return;
+  const el = document.createElement('div');
+  el.className = 'guest-card';
+  el.innerHTML = `
+    <div class="guest-card__head">
+      <span class="guest-card__title">Guest</span>
+      <button type="button" class="rm-guest">Remove</button>
+    </div>
+    <div class="guest-grid">
+      <div class="field" style="margin:0"><label>Full name</label><input class="g-name"></div>
+      <div class="field" style="margin:0"><label>Date of birth</label><input class="g-birth" type="date"></div>
+      <div class="field" style="margin:0"><label>Relation</label><input class="g-rel" placeholder="e.g. spouse, child"></div>
+    </div>`;
+  el.querySelector('.rm-guest').addEventListener('click', () => { el.remove(); updateOccupancy(); });
+  guestList.appendChild(el);
+  updateOccupancy();
+}
+$('#addGuest').addEventListener('click', addGuest);
+updateOccupancy();
+
+/* ---------- Submit ---------- */
+$('#form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (submitting) return;
+  const invalidStep = [1, 2, 5].find((n) => !validateStep(n));
+  if (invalidStep) { showStep(invalidStep); return; }
+
+  const v = (id) => $('#' + id).value.trim();
+  const guests = $$('.guest-card', guestList).map((g) => ({
+    name: g.querySelector('.g-name').value.trim(),
+    birth: g.querySelector('.g-birth').value,
+    relation: g.querySelector('.g-rel').value.trim(),
+  }));
+
+  submitting = true;
+  const btn = $('#submit');
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  try {
+    const res = await fetch('/api/submit', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        check_in: v('check_in'), check_out: v('check_out'), platform: v('platform'), arrival_time: v('arrival_time'),
+        resp_name: v('resp_name'), resp_email: v('resp_email'), resp_phone: v('resp_phone'),
+        resp_birth: v('resp_birth'), resp_address: v('resp_address'), vehicles: v('vehicles'),
+        pets: v('pets'), notes: v('notes'), guests, language: 'en',
+        contact_pref: document.querySelector('input[name=contact_pref]:checked').value,
+        accepted_rules: $('#accepted_rules').checked, website: v('website'),
+      }),
+    });
+    if (!res.ok) throw new Error('bad');
+
+    $('#sumCheckIn').textContent = v('check_in');
+    $('#sumCheckOut').textContent = v('check_out');
+    $('#sumName').textContent = v('resp_name');
+    $('#form').style.display = 'none';
+    $('#confirmation').classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch {
+    submitting = false;
+    btn.disabled = false;
+    btn.textContent = original;
+    showError('Something went wrong on our end. Please try again, or message us on the booking platform.');
+  }
+});
+
+updateProgress();
+</script>
+</body>
+</html>

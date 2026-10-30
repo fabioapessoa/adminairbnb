@@ -1,0 +1,14 @@
+{
+  "name": "guest-checkin",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Pre check-in form for short-term rental guests (Netlify + Netlify DB)",
+  "scripts": {
+    "dev": "netlify dev",
+    "test": "node test/validate.test.mjs"
+  },
+  "dependencies": {
+    "@netlify/neon": "^0.1.0"
+  }
+}
