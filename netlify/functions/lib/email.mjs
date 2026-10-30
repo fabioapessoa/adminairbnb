@@ -2,6 +2,7 @@ const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 const BRAND = { navy: '#142B3B', teal: '#176B75', ivory: '#FAF8F4', sand: '#E9DFD0', gold: '#B69A72', gray: '#707A80' };
+const AIRBNB_URL = 'https://www.airbnb.com/rooms/1090074875362236448';
 
 const T = {
   subject: 'Pre-Check-In Confirmed | Coronado Del Mar',
@@ -67,6 +68,7 @@ export async function sendGuestConfirmation(d) {
           </tr>
         </table>
         <p style="color:${BRAND.gray};font-size:13.5px">${esc(t.reminder)}</p>
+        <p style="font-size:13.5px"><a href="${AIRBNB_URL}" style="color:${BRAND.teal};font-weight:600;text-decoration:none">View your listing on Airbnb &rarr;</a></p>
         ${showWa ? `<p style="margin:26px 0;text-align:center"><a href="${esc(waLink)}" style="background:${BRAND.gold};color:${BRAND.navy};text-decoration:none;padding:13px 26px;border-radius:8px;display:inline-block;font-weight:bold;font-size:14px">${esc(t.wa)}</a></p>` : ''}
         <p style="margin-top:28px;white-space:pre-line">${esc(t.sign)}</p>
       </div>
