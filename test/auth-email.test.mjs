@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 process.env.SESSION_SECRET = 'x'.repeat(40);
 process.env.ADMIN_PASSWORD = 'senha-teste';
-process.env.WHATSAPP_NUMBER = '+1 (386) 555-0100';
 process.env.FROM_EMAIL = 'Fabio <hi@example.com>';
 process.env.RESEND_API_KEY = 'k';
 const { checkPassword, sessionCookie, isAuthed, clearCookie } = await import('../netlify/functions/lib/auth.mjs');
@@ -25,10 +24,11 @@ const { sendGuestConfirmation } = await import('../netlify/functions/lib/email.m
 const base = { check_in: '2026-12-26', check_out: '2027-01-02', resp_name: '<b>Ana</b>', resp_email: 'a@b.com', language: 'en', guests: [{}, {}] };
 
 await sendGuestConfirmation({ ...base, contact_pref: 'whatsapp' });
-assert.ok(sent.html.includes('https://wa.me/13865550100?text='), 'whatsapp button present');
+assert.ok(!sent.html.includes('wa.me'), 'no whatsapp button in the guest email (WhatsApp is host-initiated, from the admin panel)');
+assert.ok(sent.html.includes('airbnb.com/rooms/'), 'links back to the Airbnb listing');
 assert.ok(!sent.html.includes('<b>Ana</b>'), 'name is escaped');
 assert.ok(sent.html.includes('>3<'), 'total guests = others + 1');
 
 await sendGuestConfirmation({ ...base, contact_pref: 'email' });
-assert.ok(!sent.html.includes('wa.me'), 'no whatsapp button for email preference');
+assert.ok(!sent.html.includes('wa.me'), 'still no whatsapp button for email preference');
 console.log('auth + email: all tests passed');

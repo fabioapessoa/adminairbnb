@@ -13,8 +13,6 @@ const T = {
   property: 'Property',
   guests: 'Guests',
   reminder: 'Check-in is after 4:00 PM and check-out is before 10:00 AM. The unit uses a self check-in smart lock, and your access details will be sent through the booking platform. If you need an earlier arrival, just let us know and we will do our best to accommodate you.',
-  wa: 'Message us on WhatsApp',
-  waText: (n, d) => `Hi, this is ${n}. I just completed the pre-check-in form for ${d}.`,
   sign: 'Warmly,\nFabio',
   to: 'to',
 };
@@ -38,9 +36,6 @@ async function send({ to, subject, html, replyTo }) {
 export async function sendGuestConfirmation(d) {
   const t = T;
   const dates = `${d.check_in} ${t.to} ${d.check_out}`;
-  const wa = (process.env.WHATSAPP_NUMBER || '').replace(/\D/g, '');
-  const waLink = wa ? `https://wa.me/${wa}?text=${encodeURIComponent(t.waText(d.resp_name, dates))}` : '';
-  const showWa = d.contact_pref === 'whatsapp' && waLink;
   const totalGuests = d.guests.length + 1;
 
   const html = `
@@ -69,7 +64,6 @@ export async function sendGuestConfirmation(d) {
         </table>
         <p style="color:${BRAND.gray};font-size:13.5px">${esc(t.reminder)}</p>
         <p style="font-size:13.5px"><a href="${AIRBNB_URL}" style="color:${BRAND.teal};font-weight:600;text-decoration:none">View your listing on Airbnb &rarr;</a></p>
-        ${showWa ? `<p style="margin:26px 0;text-align:center"><a href="${esc(waLink)}" style="background:${BRAND.gold};color:${BRAND.navy};text-decoration:none;padding:13px 26px;border-radius:8px;display:inline-block;font-weight:bold;font-size:14px">${esc(t.wa)}</a></p>` : ''}
         <p style="margin-top:28px;white-space:pre-line">${esc(t.sign)}</p>
       </div>
     </div>

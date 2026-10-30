@@ -27,7 +27,6 @@ A premium, boutique-style pre-check-in experience for the property, in American 
 | `RESEND_API_KEY` | API key from resend.com |
 | `FROM_EMAIL` | e.g. `Fabio <checkin@yourdomain.com>` (domain verified in Resend) |
 | `NOTIFY_EMAIL` | where you want the "new check-in" notice, also used as reply-to |
-| `WHATSAPP_NUMBER` | your number with country code, digits only, e.g. `13865550100` |
 
 4. Deploy. Send the same link to every guest: `https://your-site.netlify.app/`
 
@@ -36,7 +35,7 @@ If `RESEND_API_KEY` or `FROM_EMAIL` is missing, the form still saves the data an
 ## How it works
 
 - `POST /api/submit` validates, saves, then sends the guest confirmation and your notice.
-- The guest email shows the WhatsApp button only when the guest chose WhatsApp.
+- The guest email links back to the Airbnb listing; it has no WhatsApp button. If a guest opted into WhatsApp (step 4 of the form), that only shows up as "Contact: whatsapp" in `/admin` — reach out from there, using the guest's own phone number.
 - `/api/admin/*` endpoints require the signed session cookie (12 hours, HttpOnly).
 - Spam: hidden honeypot field plus server side validation.
 
